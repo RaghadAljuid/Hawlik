@@ -4,15 +4,13 @@
 //
 //  Created by Raghad Aljuid on 20/08/1447 AH.
 //
+import Foundation
 
-import SwiftUI
+enum Preferences {
+    static let selectedInterestsKey = "selectedInterests"
 
-struct Prefrences: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+    static func loadSelectedInterests() -> Set<Interest> {
+        let raw = UserDefaults.standard.stringArray(forKey: selectedInterestsKey) ?? []
+        return Set(raw.compactMap { Interest(rawValue: $0) })
     }
-}
-
-#Preview {
-    Prefrences()
 }

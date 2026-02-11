@@ -8,11 +8,32 @@
 import SwiftUI
 
 struct CategoryRow: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
+    let selectedInterests: [Interest]
+    @Binding var active: Interest?
+    var onSelect: () -> Void
 
-#Preview {
-    CategoryRow()
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                ForEach(selectedInterests, id: \.id) { item in
+                    Button {
+                        active = item
+                        onSelect()
+                    } label: {
+                        Text(item.title)
+                            .font(.subheadline)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 10)
+                            .background(
+                                active == item
+                                ? Color(hex: "#6A6DFF").opacity(0.30)
+                                : Color.clear
+                            )
+                            .clipShape(Capsule())
+                    }
+                }
+            }
+            .padding(.horizontal)
+        }
+    }
 }

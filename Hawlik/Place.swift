@@ -4,15 +4,12 @@
 //
 //  Created by Raghad Aljuid on 20/08/1447 AH.
 //
+import Foundation
+import CoreLocation
 
-import SwiftUI
-
-struct Place: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
-
-#Preview {
-    Place()
+struct Place: Identifiable {
+    let id = UUID()
+    let name: String
+    let interest: Interest
+    let coordinate: CLLocationCoordinate2D
 }

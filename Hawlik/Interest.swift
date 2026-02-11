@@ -4,15 +4,26 @@
 //
 //  Created by Raghad Aljuid on 20/08/1447 AH.
 //
+import Foundation
 
-import SwiftUI
+enum Interest: String, CaseIterable, Identifiable {
+    case historical, coffeeShop, activities, restaurant, sports, trending, shopping, nature
 
-struct Interest: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .historical: return "historical"
+        case .coffeeShop: return "coffeeShop"
+        case .activities: return "activities"
+        case .restaurant: return "restaurant"
+        case .sports: return "sports"
+        case .trending: return "trending"
+        case .shopping: return "shopping"
+        case .nature: return "nature"
+        }
     }
-}
 
-#Preview {
-    Interest()
+    /// اسم صورة الأيقونة في Assets (نفس الاسم)
+    var iconName: String { rawValue }
 }
