@@ -38,10 +38,35 @@ final class TripStore: ObservableObject {
 
 struct TripDiaryShell: View {
     @StateObject private var store = TripStore()
+    @State private var selectedTab: AppTab = AppTab.map
 
     var body: some View {
-        TripsView()
-            .environmentObject(store)
+        ZStack {
+            // Main content switches based on selected tab
+            Group {
+                switch selectedTab {
+                case AppTab.map:
+                    MapHomeView()
+                case AppTab.document:
+                    TripsView()
+                        .environmentObject(store)
+                case AppTab.bookmark:
+                    // Placeholder for bookmarks page
+                    ZStack {
+                        AppBackground()
+                        Text("Bookmarks")
+                            .font(.system(size: 28, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.9))
+                    }
+                }
+            }
+        }
+        .overlay(alignment: .bottom) {
+            AppTabBar(selectedTab: $selectedTab)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
+        }
+        .ignoresSafeArea(edges: .bottom)
     }
 }
 
@@ -54,7 +79,7 @@ struct TripsView: View {
     @State private var showCreateSheet = false
     @State private var sheetID = UUID()
 
-    // Rename
+    // Rename (لا تغييرات)
     @State private var showRenameAlert = false
     @State private var renameText = ""
     @State private var renameTrip: Trip?
@@ -126,6 +151,7 @@ struct TripsView: View {
         }
         .overlay {
             if showRenameAlert {
+                // ✅ الرينيم كما هو - لا تغييرات
                 RenameAlertOverlay(
                     title: "Rename",
                     message: "Enter a new name.",
@@ -259,7 +285,7 @@ struct TripCell: View {
                 .font(.system(size: 24, weight: .medium, design: .rounded))
                 .foregroundStyle(.white.opacity(0.92))
                 .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .center) // ✅ الاسم بالنص
+                .frame(maxWidth: .infinity, alignment: .center)
         }
         .frame(maxWidth: .infinity)
     }
@@ -291,7 +317,7 @@ struct TripCell: View {
     }
 }
 
-// MARK: - Action Menu Box (✅ هنا التعديل الوحيد: تصغير Rename/Delete)
+// MARK: - Action Menu Box (لا تغييرات على الرينيم)
 
 struct ActionMenuBox: View {
     let renameAction: () -> Void
@@ -313,14 +339,14 @@ struct ActionMenuBox: View {
             }
             .buttonStyle(MenuRowPressStyle())
         }
-        .frame(width: AppUI.menuW, height: AppUI.menuH) // ✅ هذا اللي يفرض الحجم
+        .frame(width: AppUI.menuW, height: AppUI.menuH)
         .background(
             RoundedRectangle(cornerRadius: AppUI.menuCorner, style: .continuous)
-                .fill(AppUI.menuItemColor)
+                .fill(DanahUI.menuItemColor)
         )
         .overlay(
             RoundedRectangle(cornerRadius: AppUI.menuCorner, style: .continuous)
-                .stroke(Color.white.opacity(0.10), lineWidth: -3)
+                .stroke(Color.white.opacity(0.10), lineWidth: 1)
         )
         .shadow(color: .black.opacity(0.28), radius: 1, x: -10, y: -10)
         .clipShape(RoundedRectangle(cornerRadius: AppUI.menuCorner, style: .continuous))
@@ -343,6 +369,8 @@ struct ActionMenuBox: View {
         .contentShape(Rectangle())
     }
 }
+
+// MARK: - Rename Overlay (✅ تعديل لون زر Save فقط)
 
 struct RenameAlertOverlay: View {
     let title: String
@@ -408,6 +436,7 @@ struct RenameAlertOverlay: View {
                             .stroke(Color.white.opacity(0.12), lineWidth: 1)
                     )
 
+                    // ✅ Save صار لونه مثل اللي تبينه + cornerRadius(25) + glassEffect()
                     Button(action: onSave) {
                         Text("Save")
                             .font(.system(size: 16, weight: .semibold, design: .rounded))
@@ -417,20 +446,22 @@ struct RenameAlertOverlay: View {
                     }
                     .buttonStyle(.plain)
                     .background(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(AppUI.continueColor)
+                        Color(
+                            red: 106/255,
+                            green: 109/255,
+                            blue: 255/255
+                        )
+                        .opacity(0.6)
                     )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .stroke(Color.white.opacity(0.18), lineWidth: 1)
-                    )
+                    .cornerRadius(25)
+                    .glassEffect()
                 }
                 .padding(.top, 4)
             }
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(AppUI.menuItemColor)
+                    .fill(DanahUI.menuItemColor)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
@@ -440,7 +471,9 @@ struct RenameAlertOverlay: View {
             .frame(maxWidth: 360)
         }
     }
-}// MARK: - Plus Button (+ أبيض)
+}
+
+// MARK: - Press Style
 
 struct MenuRowPressStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
@@ -452,22 +485,17 @@ struct MenuRowPressStyle: ButtonStyle {
     }
 }
 
+// MARK: - Plus Button
+
 struct PlusButton: View {
     var body: some View {
-        ZStack {
-            Circle()
-                .fill(AppUI.plusPurple)
-                .overlay(
-                    Circle().stroke(Color.white.opacity(0.22), lineWidth: 1)
-                )
-
-            Image(systemName: "plus")
-                .font(.system(size: 20, weight: .heavy))
-                .foregroundStyle(.white)
-                .shadow(color: .black.opacity(0.20), radius: 2, x: 0, y: 1)
-        }
-        .frame(width: 56, height: 56)
-        .shadow(color: .black.opacity(0.25), radius: 12, x: 0, y: 8)
+        Image(systemName: "plus.circle.fill")
+            .font(.system(size: 60, weight: .light))
+            .foregroundColor(.white.opacity(0.4))
+            .frame(width: 60, height: 60)
+            .overlay(Circle().stroke(Color.purple.opacity(0.5), lineWidth: 1))
+            .overlay(Circle().stroke(Color.white.opacity(0.3), lineWidth: 1))
+            .glassEffect()
     }
 }
 
@@ -568,26 +596,31 @@ struct CreateTripSheet: View {
             } label: {
                 Text("Continue")
                     .font(.system(size: 18, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.white.opacity(0.9))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
             }
             .buttonStyle(.plain)
             .background(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(AppUI.continueColor)
+                    .fill(.clear)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(Color.white.opacity(0.18), lineWidth: 1)
+                    .stroke(Color.purple.opacity(0.5), lineWidth: 1)
             )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(Color.white.opacity(0.3), lineWidth: 1)
+            )
+            .glassEffect()
             .shadow(color: .black.opacity(0.25), radius: 10, x: 0, y: 6)
             .padding(.top, 6)
         }
         .padding(18)
         .background(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(AppUI.cardBG)
+                .fill(DanahUI.cardBG)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
@@ -623,4 +656,3 @@ private struct TripAnchorKey: PreferenceKey {
 #Preview {
     TripDiaryShell()
 }
-
