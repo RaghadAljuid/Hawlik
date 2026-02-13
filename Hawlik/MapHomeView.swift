@@ -9,6 +9,8 @@ import MapKit
 import CoreLocation
 
 struct MapHomeView: View {
+    @ObservedObject var vm: PlacesViewModel
+
     @State private var selectedPlace: Place? = nil
 
     @State private var selectedBudget: Int? = nil
@@ -17,7 +19,8 @@ struct MapHomeView: View {
     @State private var showBudgetPopup = false
     @State private var showInterestPopup = false
 
-    @State private var selectedTab: AppTab = .map
+    @Binding var selectedTab: AppTab
+
 
     @State private var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 24.7136, longitude: 46.6753),
@@ -43,7 +46,7 @@ struct MapHomeView: View {
                 }
             )
             .ignoresSafeArea()
-
+            
             VStack(spacing: 0) {
                 TopBar(
                     showBudgetPopup: $showBudgetPopup,
@@ -56,17 +59,17 @@ struct MapHomeView: View {
                         Task { await reloadPlaces() }
                     }
                 )
-
+                
                 if showBudgetPopup {
                     BudgetPopup(selectedBudget: $selectedBudget) {
                         withAnimation(.easeInOut) { showBudgetPopup = false }
                         Task { await reloadPlaces() }
                     }
                 }
-
+                
                 Spacer()
             }
-
+            
             VStack {
                 Spacer()
                 PlacesNearYouSheet(
@@ -79,11 +82,10 @@ struct MapHomeView: View {
             }
         }
         .onAppear { Task { await reloadPlaces() } }
-
-        // ✅ sheet للتفاصيل
+        
         .sheet(item: $selectedPlace) { place in
-            PlaceDetailsSheet(place: place)
-                .presentationDetents([.fraction(0.45), .large])
+            PlaceDetailsSheet(place: place, vm: vm)
+                .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
     }

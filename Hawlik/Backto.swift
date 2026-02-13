@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Place: Identifiable, Equatable {
+struct BacktoPlace: Identifiable, Equatable {
     let id = UUID()
     let name: String
     let image: String
