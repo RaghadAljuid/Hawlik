@@ -1,28 +1,22 @@
-//
-//  PlacesNearYouSheet.swift
-//  Hawlik
-//
-//  Created by Raghad Aljuid on 20/08/1447 AH.
-//
 import SwiftUI
 
 struct PlacesNearYouSheet: View {
     let title: String
     @Binding var isExpanded: Bool
     let places: [Place]
-    @Binding var selectedTab: AppTab          // ✅ جديد
-    var onSearchHere: () -> Void              // (موجود عندك)
+    var onSearchHere: () -> Void
+
+    // ✅ اختياري: لو تبين الشيت يغير التاب
+    var onGoToTab: ((AppTab) -> Void)? = nil
 
     var body: some View {
         VStack(spacing: 12) {
 
-            // handle
             Capsule()
-                .fill(Color.black.opacity(0.12))     // ✅ أخف
+                .fill(Color.black.opacity(0.12))
                 .frame(width: 52, height: 5)
                 .padding(.top, 10)
 
-            // title
             HStack {
                 Text(title)
                     .font(.system(size: 30, weight: .bold))
@@ -31,7 +25,6 @@ struct PlacesNearYouSheet: View {
             }
             .padding(.horizontal, 18)
 
-            // list
             if isExpanded {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 10) {
@@ -46,11 +39,19 @@ struct PlacesNearYouSheet: View {
                                         .font(.system(size: 12))
                                         .foregroundColor(.black.opacity(0.45))
                                 }
+
                                 Spacer()
+
+                                // مثال تفاعل: زر يوديك لصفحة التريبس
+                                Button("Open") {
+                                    onGoToTab?(.document)
+                                }
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(.black.opacity(0.7))
                             }
                             .padding(.horizontal, 14)
                             .padding(.vertical, 12)
-                            .background(Color.white.opacity(0.18)) // ✅ أخف عشان الغلاس يبان
+                            .background(Color.white.opacity(0.18))
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                         }
                     }
@@ -58,12 +59,6 @@ struct PlacesNearYouSheet: View {
                 }
                 .frame(height: 140)
             }
-
-            // ✅ AppTabBar داخل نفس الشيت (مو منفصل)
-            AppTabBar(selectedTab: $selectedTab)
-                .background(Color.clear)             // ✅ مهم عشان ما يصير له بوكس لحاله
-                .padding(.horizontal, 10)
-                .padding(.bottom, 10)
         }
         .frame(maxWidth: .infinity)
         .background(
@@ -72,10 +67,9 @@ struct PlacesNearYouSheet: View {
                     .fill(.ultraThinMaterial)
 
                 RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .fill(Color(hex: "#DDCDE3").opacity(0.08)) // ✨ خفيف جدًا
+                    .fill(Color(hex: "#DDCDE3").opacity(0.08))
             }
         )
-
         .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
         .padding(.horizontal, 14)
         .padding(.bottom, 10)

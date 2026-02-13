@@ -10,10 +10,11 @@ struct RootView: View {
     @State private var refreshID = UUID()
     @AppStorage("hasSelectedInterests") private var hasSelectedInterests = false
     @State private var selected: Set<Interest> = []
+    @State private var selectedTab: AppTab = .map
 
     var body: some View {
         ZStack {
-            MapHomeView()
+            MapHomeView(selectedTab: $selectedTab)
                 .id(refreshID)
 
             if !hasSelectedInterests {
@@ -41,3 +42,4 @@ struct RootView: View {
         UserDefaults.standard.set(raw, forKey: Preferences.selectedInterestsKey)
     }
 }
+
