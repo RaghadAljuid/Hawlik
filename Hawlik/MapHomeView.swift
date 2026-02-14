@@ -3,17 +3,20 @@ import MapKit
 import CoreLocation
 
 struct MapHomeView: View {
+    @AppStorage("didSelectInterests") private var didSelectInterests = false
 
-    // عشان التاب/الشيت يتفاعلون
     @Binding var selectedTab: AppTab
+    @ObservedObject var vm: PlacesViewModel
 
     @State private var selectedPlace: Place? = nil
-
     @State private var selectedBudget: Int? = nil
-    @State private var selectedInterests: Set<Interest> = Preferences.loadSelectedInterests()
+
+    // ✅ تحميل الاهتمامات من UserDefaults (حل سريع)
+    @State private var selectedInterests: Set<Interest> = []
 
     @State private var showBudgetPopup = false
-    @State private var showInterestPopup = false
+    @State private var showInterestPopup = false          // من TopBar (تعديل لاحق)
+    @State private var showFirstInterestPopup = false     // ✅ أول مرة دخول
 
     @State private var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 24.7136, longitude: 46.6753),
@@ -24,26 +27,14 @@ struct MapHomeView: View {
     @State private var places: [Place] = []
     @State private var isExpanded = false
 
-    @StateObject private var placesVM = PlacesViewModel()
-
-    // يمنع سبام بحث
-    @State private var searchTask: Task<Void, Never>?
-
-    private let tabBarClearance: CGFloat = 120
-
     var body: some View {
         ZStack {
-
             MapViewRepresentable(
                 places: places,
                 region: $region,
                 followUser: $followUser,
-                onRequestSearchHere: {
-                    requestReloadPlaces()
-                },
-                onSelectPlace: { place in
-                    selectedPlace = place
-                }
+                onRequestSearchHere: { Task { await reloadPlaces() } },
+                onSelectPlace: { selectedPlace = $0 }
             )
             .ignoresSafeArea()
 
@@ -56,14 +47,19 @@ struct MapHomeView: View {
                     selectedInterests: $selectedInterests,
                     onDoneCategories: {
                         withAnimation(.easeInOut) { showInterestPopup = false }
-                        requestReloadPlaces()
+
+                        // ✅ حفظ سريع
+                        saveInterests(selectedInterests)
+
+                        // ✅ تحديث الخريطة
+                        Task { await reloadPlaces() }
                     }
                 )
 
                 if showBudgetPopup {
                     BudgetPopup(selectedBudget: $selectedBudget) {
                         withAnimation(.easeInOut) { showBudgetPopup = false }
-                        requestReloadPlaces()
+                        Task { await reloadPlaces() }
                     }
                 }
 
@@ -72,40 +68,75 @@ struct MapHomeView: View {
 
             VStack {
                 Spacer()
-
                 PlacesNearYouSheet(
                     title: "Places near you",
                     isExpanded: $isExpanded,
                     places: places,
                     onSearchHere: { Task { await reloadPlaces() } }
                 )
-                .padding(.bottom, tabBarClearance)
+            }
+
+            // ✅ Interest Popup لأول مرة فقط
+            if showFirstInterestPopup {
+                Color.black.opacity(0.35)
+                    .ignoresSafeArea()
+
+                InterestPopup(selectedInterests: $selectedInterests) {
+                    // Continue
+                    saveInterests(selectedInterests)
+                    didSelectInterests = true
+
+                    withAnimation(.easeInOut) {
+                        showFirstInterestPopup = false
+                    }
+
+                    Task { await reloadPlaces() }
+                }
+                .transition(.scale.combined(with: .opacity))
+                .zIndex(10)
             }
         }
-        .onAppear { Task { await reloadPlaces() } }
+        .onAppear {
+            // ✅ حمّل الاهتمامات أول ما يفتح الماب
+            selectedInterests = loadInterests()
+
+            if !didSelectInterests {
+                // أول مرة: طلع البوب-أب بعد شوي
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                    withAnimation(.easeInOut) {
+                        showFirstInterestPopup = true
+                    }
+                }
+            } else {
+                // مو أول مرة: حدّث مباشرة
+                Task { await reloadPlaces() }
+            }
+        }
         .sheet(item: $selectedPlace) { place in
-            PlaceDetailsSheet(place: place, vm: placesVM)
+            PlaceDetailsSheet(place: place, vm: vm)
                 .presentationDetents([.fraction(0.45), .large])
                 .presentationDragIndicator(.visible)
         }
     }
 
-    private func requestReloadPlaces() {
-        searchTask?.cancel()
-        searchTask = Task {
-            try? await Task.sleep(nanoseconds: 250_000_000)
-            if Task.isCancelled { return }
-            await reloadPlaces()
-        }
+    // MARK: - Quick Save/Load (Temporary)
+
+    private func saveInterests(_ set: Set<Interest>) {
+        // حل سريع يعتمد على title
+        let titles = set.map { $0.title }
+        UserDefaults.standard.set(titles, forKey: "selectedInterests")
     }
 
-    @MainActor
-    private func reloadPlaces() async {
-        guard let first = selectedInterests.first else {
-            places = []
-            return
-        }
+    private func loadInterests() -> Set<Interest> {
+        let titles = UserDefaults.standard.stringArray(forKey: "selectedInterests") ?? []
+        let matches = Interest.allCases.filter { titles.contains($0.title) }
+        return Set(matches)
+    }
 
+    // MARK: - Reload Places
+
+    private func reloadPlaces() async {
+        guard let first = selectedInterests.first else { return }
         followUser = false
         places = await LocalSearchService.search(
             interest: first,
@@ -115,6 +146,3 @@ struct MapHomeView: View {
     }
 }
 
-#Preview {
-    MapHomeView(selectedTab: .constant(.map))
-}

@@ -2,10 +2,12 @@ import SwiftUI
 
 @main
 struct HawlikApp: App {
+    @State private var showSplash = true
+
     var body: some Scene {
         WindowGroup {
             ZStack {
-                AppShell()   // ✅ هذا الروت الجديد
+                TripDiaryShell()   // Use the existing root shell
 
                 if showSplash {
                     Image("SplashImage")

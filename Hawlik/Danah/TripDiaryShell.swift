@@ -35,6 +35,7 @@ final class TripStore: ObservableObject {
 struct TripDiaryShell: View {
     @StateObject private var store = TripStore()
     @State private var selectedTab: AppTab = .map
+    @StateObject private var placesVM = PlacesViewModel()
 
     var body: some View {
         ZStack {
@@ -42,7 +43,7 @@ struct TripDiaryShell: View {
             Group {
                 switch selectedTab {
                 case AppTab.map:
-                    MapHomeView()
+                    MapHomeView(selectedTab: $selectedTab, vm: placesVM)
 
                 case AppTab.document:
                     TripsView()
@@ -65,10 +66,5 @@ struct TripDiaryShell: View {
                 .background(Color.clear)
         }
     }
-}
-
-// MARK: - Preview
-#Preview {
-    TripDiaryShell()
 }
 

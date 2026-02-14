@@ -6,9 +6,6 @@ struct PlacesNearYouSheet: View {
     let places: [Place]
     var onSearchHere: () -> Void
 
-    // ✅ اختياري: لو تبين الشيت يغير التاب
-    var onGoToTab: ((AppTab) -> Void)? = nil
-
     var body: some View {
         VStack(spacing: 12) {
 
@@ -39,15 +36,7 @@ struct PlacesNearYouSheet: View {
                                         .font(.system(size: 12))
                                         .foregroundColor(.black.opacity(0.45))
                                 }
-
                                 Spacer()
-
-                                // مثال تفاعل: زر يوديك لصفحة التريبس
-                                Button("Open") {
-                                    onGoToTab?(.document)
-                                }
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundColor(.black.opacity(0.7))
                             }
                             .padding(.horizontal, 14)
                             .padding(.vertical, 12)
@@ -62,20 +51,15 @@ struct PlacesNearYouSheet: View {
         }
         .frame(maxWidth: .infinity)
         .background(
-            ZStack {
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .fill(.ultraThinMaterial)
-
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .fill(Color(hex: "#DDCDE3").opacity(0.08))
-            }
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .fill(.ultraThinMaterial)
         )
-        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 28))
         .padding(.horizontal, 14)
-        .padding(.bottom, 10)
+        // 👇 نخلي مسافة للتاب بار
+        
         .onTapGesture {
             withAnimation(.easeInOut) { isExpanded.toggle() }
         }
     }
 }
-

@@ -6,10 +6,11 @@ struct RootView: View {
     @State private var refreshID = UUID()
     @AppStorage("hasSelectedInterests") private var hasSelectedInterests = false
     @State private var selected: Set<Interest> = []
+    @StateObject private var placesVM = PlacesViewModel()
 
     var body: some View {
         ZStack {
-            MapHomeView()
+            MapHomeView(selectedTab: $selectedTab, vm: placesVM)
                 .id(refreshID)
             if !hasSelectedInterests {
                 InterestPopup(selectedInterests: $selected) {
@@ -31,3 +32,4 @@ struct RootView: View {
 #Preview {
     RootView()
 }
+
