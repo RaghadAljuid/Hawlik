@@ -1,37 +1,21 @@
-//
-//  SwiftUIView.swift
-//  Hawlik
-//
-//  Created by Raghad Aljuid on 20/08/1447 AH.
-//
 import SwiftUI
 
 struct RootView: View {
-    @State private var refreshID = UUID()
+
     @AppStorage("hasSelectedInterests") private var hasSelectedInterests = false
     @State private var selected: Set<Interest> = []
-    @State private var selectedTab: AppTab = .map
 
     var body: some View {
         ZStack {
-            MapHomeView(selectedTab: $selectedTab)
-                .id(refreshID)
+            TripDiaryShell()   // ✅ هذا هو الروت الصح (اللي فيه التاب بار)
 
+            // Popup الاهتمامات (فقط أول مرة)
             if !hasSelectedInterests {
                 InterestPopup(selectedInterests: $selected) {
-                    // حفظ الاختيار
                     saveSelectedInterests(selected)
                     hasSelectedInterests = true
-                    // Trigger MapScreen to re-appear and reload preferences
-                    refreshID = UUID()
                 }
                 .transition(.opacity)
-            }
-        }
-        .onAppear {
-            // Optionally prefill current selection if already chosen before
-            if hasSelectedInterests {
-                selected = Preferences.loadSelectedInterests()
             }
         }
         .animation(.easeInOut, value: hasSelectedInterests)
@@ -43,3 +27,6 @@ struct RootView: View {
     }
 }
 
+#Preview {
+    RootView()
+}

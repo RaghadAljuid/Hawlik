@@ -78,3 +78,4 @@ struct PlacesNearYouSheet: View {
         }
     }
 }
+

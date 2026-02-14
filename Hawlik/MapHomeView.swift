@@ -4,7 +4,7 @@ import CoreLocation
 
 struct MapHomeView: View {
 
-    // ✅ هذا فقط عشان التفاعل مع التاب بار من الشيت لاحقًا
+    // عشان التاب/الشيت يتفاعلون
     @Binding var selectedTab: AppTab
 
     @State private var selectedPlace: Place? = nil
@@ -24,16 +24,16 @@ struct MapHomeView: View {
     @State private var places: [Place] = []
     @State private var isExpanded = false
 
-    // يمنع سبام البحث
+    @StateObject private var placesVM = PlacesViewModel()
+
+    // يمنع سبام بحث
     @State private var searchTask: Task<Void, Never>?
 
-    // مساحة تحت للشيت عشان التاب بار يظل قابل للضغط
     private let tabBarClearance: CGFloat = 120
 
     var body: some View {
         ZStack {
 
-            // MARK: - Map
             MapViewRepresentable(
                 places: places,
                 region: $region,
@@ -47,7 +47,6 @@ struct MapHomeView: View {
             )
             .ignoresSafeArea()
 
-            // MARK: - Top UI
             VStack(spacing: 0) {
                 TopBar(
                     showBudgetPopup: $showBudgetPopup,
@@ -71,7 +70,6 @@ struct MapHomeView: View {
                 Spacer()
             }
 
-            // MARK: - Bottom Sheet
             VStack {
                 Spacer()
 
@@ -79,24 +77,18 @@ struct MapHomeView: View {
                     title: "Places near you",
                     isExpanded: $isExpanded,
                     places: places,
-                    onSearchHere: {
-                        requestReloadPlaces()
-                    }
+                    onSearchHere: { requestReloadPlaces() }
                 )
-                .padding(.bottom, tabBarClearance) // 👈 مهم جدًا
+                .padding(.bottom, tabBarClearance)
             }
         }
-        .onAppear {
-            requestReloadPlaces()
-        }
+        .onAppear { requestReloadPlaces() }
         .sheet(item: $selectedPlace) { place in
-            PlaceDetailsSheet(place: place)
+            PlaceDetailsSheet(place: place, vm: placesVM)
                 .presentationDetents([.fraction(0.45), .large])
                 .presentationDragIndicator(.visible)
         }
     }
-
-    // MARK: - Search Logic
 
     private func requestReloadPlaces() {
         searchTask?.cancel()

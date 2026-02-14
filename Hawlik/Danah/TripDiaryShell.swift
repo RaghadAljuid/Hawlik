@@ -69,3 +69,4 @@ struct TripDiaryShell: View {
 #Preview {
     TripDiaryShell()
 }
+
