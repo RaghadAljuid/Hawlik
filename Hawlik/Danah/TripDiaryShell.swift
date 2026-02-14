@@ -49,7 +49,8 @@ struct TripDiaryShell: View {
                     TripsView()
                         .environmentObject(store)
                 case AppTab.bookmark:
-                    // Placeholder for bookmarks page
+                    Saved(vm: placesVM)
+
                     ZStack {
                         AppBackground()
                         Text("Bookmarks")

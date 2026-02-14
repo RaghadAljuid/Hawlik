@@ -7,7 +7,7 @@ struct HawlikApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
-                TripDiaryShell()   // Use the existing root shell
+                AppShell()   // ✅ بدل TripDiaryShell
 
                 if showSplash {
                     Image("SplashImage")
@@ -27,3 +27,4 @@ struct HawlikApp: App {
         }
     }
 }
+

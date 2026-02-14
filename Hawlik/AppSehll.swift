@@ -22,12 +22,8 @@ struct AppShell: View {
                     .environmentObject(tripStore)
 
             case .bookmark:
-                ZStack {
-                    AppBackground()
-                    Text("Bookmarks")
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.9))
-                }
+                Saved(vm: placesVM)
+
             }
         }
         .safeAreaInset(edge: .bottom) {

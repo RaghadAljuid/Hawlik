@@ -25,6 +25,7 @@ struct PlaceDetailsSheet: View {
             HStack(alignment: .top, spacing: 14) {
 
                 Button {
+                    
                     print("Image tapped for \(place.name)")
                 } label: {
                     Image(heroImageName)
