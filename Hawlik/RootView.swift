@@ -1,15 +1,16 @@
 import SwiftUI
 
 struct RootView: View {
+    @State private var selectedTab: AppTab = .map
 
+    @State private var refreshID = UUID()
     @AppStorage("hasSelectedInterests") private var hasSelectedInterests = false
     @State private var selected: Set<Interest> = []
 
     var body: some View {
         ZStack {
-            TripDiaryShell()   // ✅ هذا هو الروت الصح (اللي فيه التاب بار)
-
-            // Popup الاهتمامات (فقط أول مرة)
+            MapHomeView()
+                .id(refreshID)
             if !hasSelectedInterests {
                 InterestPopup(selectedInterests: $selected) {
                     saveSelectedInterests(selected)

@@ -38,21 +38,23 @@ struct TripDiaryShell: View {
 
     var body: some View {
         ZStack {
-            switch selectedTab {
+            // Main content switches based on selected tab
+            Group {
+                switch selectedTab {
+                case AppTab.map:
+                    MapHomeView()
 
-            case .map:
-                MapHomeView(selectedTab: $selectedTab)
-
-            case .document:
-                TripsView()
-                    .environmentObject(store)
-
-            case .bookmark:
-                ZStack {
-                    AppBackground()
-                    Text("Bookmarks")
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.9))
+                case AppTab.document:
+                    TripsView()
+                        .environmentObject(store)
+                case AppTab.bookmark:
+                    // Placeholder for bookmarks page
+                    ZStack {
+                        AppBackground()
+                        Text("Bookmarks")
+                            .font(.system(size: 28, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.9))
+                    }
                 }
             }
         }

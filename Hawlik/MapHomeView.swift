@@ -77,12 +77,12 @@ struct MapHomeView: View {
                     title: "Places near you",
                     isExpanded: $isExpanded,
                     places: places,
-                    onSearchHere: { requestReloadPlaces() }
+                    onSearchHere: { Task { await reloadPlaces() } }
                 )
                 .padding(.bottom, tabBarClearance)
             }
         }
-        .onAppear { requestReloadPlaces() }
+        .onAppear { Task { await reloadPlaces() } }
         .sheet(item: $selectedPlace) { place in
             PlaceDetailsSheet(place: place, vm: placesVM)
                 .presentationDetents([.fraction(0.45), .large])
