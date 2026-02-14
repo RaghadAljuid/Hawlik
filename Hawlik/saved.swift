@@ -55,10 +55,17 @@ struct SavedPlaceCard: View {
 
     var body: some View {
         HStack(spacing: 16) {
-            Image(systemName: "bookmark.fill")
-                .font(.system(size: 22, weight: .semibold))
-                .foregroundStyle(.purple.opacity(0.75))
-                .frame(width: 34)
+
+            // ✅ أيقونة السيف – بالضغط عليها ينشال الحفظ
+            Button {
+                onDelete()
+            } label: {
+                Image(systemName: "bookmark.fill")
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundStyle(.purple.opacity(0.85))
+                    .frame(width: 34)
+            }
+            .buttonStyle(.plain)
 
             Text(place.name)
                 .font(.system(size: 22, weight: .medium))
@@ -74,7 +81,6 @@ struct SavedPlaceCard: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 44, height: 44)
-                    .opacity(0.9)
             }
             .frame(width: 92, height: 56)
         }
@@ -84,10 +90,5 @@ struct SavedPlaceCard: View {
             RoundedRectangle(cornerRadius: 22)
                 .fill(Color.black.opacity(0.25))
         )
-        .contextMenu {
-            Button(role: .destructive) { onDelete() } label: {
-                Label("Remove", systemImage: "trash")
-            }
-        }
     }
 }
