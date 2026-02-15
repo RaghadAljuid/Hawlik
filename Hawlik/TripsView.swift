@@ -5,6 +5,8 @@ import Combine
 // MARK: - Trips Screen
 
 struct TripsView: View {
+    @State private var showPlanner = false
+
     @EnvironmentObject private var store: TripStore
 
     // Create
@@ -103,6 +105,9 @@ struct TripsView: View {
                 .zIndex(1000)
             }
         }
+        .fullScreenCover(isPresented: $showPlanner) {
+            TripPlanningFlowView()
+        }
     }
 
     private func closeMenu() {
@@ -175,6 +180,10 @@ struct TripsView: View {
             LazyVGrid(columns: columns, alignment: .leading, spacing: AppUI.gridSpacing) {
                 ForEach(store.trips) { trip in
                     TripCell(trip: trip)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            showPlanner = true
+                        }
                         .anchorPreference(key: TripAnchorKey.self, value: .bounds) { [trip.id: $0] }
                         .contentShape(Rectangle())
                         .onLongPressGesture(minimumDuration: 0.22) {
@@ -548,4 +557,3 @@ private struct TripAnchorKey: PreferenceKey {
         value.merge(nextValue(), uniquingKeysWith: { $1 })
     }
 }
-

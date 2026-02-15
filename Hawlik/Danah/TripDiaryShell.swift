@@ -39,25 +39,16 @@ struct TripDiaryShell: View {
 
     var body: some View {
         ZStack {
-            // Main content switches based on selected tab
-            Group {
-                switch selectedTab {
-                case AppTab.map:
-                    MapHomeView(selectedTab: $selectedTab, vm: placesVM)
+            switch selectedTab {
+            case .map:
+                MapHomeView(selectedTab: $selectedTab, vm: placesVM)
 
-                case AppTab.document:
-                    TripsView()
-                        .environmentObject(store)
-                case AppTab.bookmark:
-                    Saved(vm: placesVM)
+            case .document:
+                TripsView()
+                    .environmentObject(store)
 
-                    ZStack {
-                        AppBackground()
-                        Text("Bookmarks")
-                            .font(.system(size: 28, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white.opacity(0.9))
-                    }
-                }
+            case .bookmark:
+                Saved(vm: placesVM)
             }
         }
         .safeAreaInset(edge: .bottom) {
