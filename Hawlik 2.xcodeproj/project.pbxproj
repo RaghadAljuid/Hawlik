@@ -21,12 +21,29 @@
 			remoteGlobalIDString = 8C42C9A92F4A2B0D008290E2;
 			remoteInfo = Hawlik_iOS;
 		};
+		8C528C242F333EE900F9D2EA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8C528C0E2F333EE700F9D2EA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8C528C152F333EE700F9D2EA;
+			remoteInfo = Hawlik;
+		};
+		8C528C2E2F333EE900F9D2EA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8C528C0E2F333EE700F9D2EA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8C528C152F333EE700F9D2EA;
+			remoteInfo = Hawlik;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		8C42C9AA2F4A2B0D008290E2 /* Hawlik_iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hawlik_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C42C9B62F4A2B0E008290E2 /* Hawlik_iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Hawlik_iOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C42C9C02F4A2B0E008290E2 /* Hawlik_iOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Hawlik_iOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8C528C162F333EE700F9D2EA /* Hawlik.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hawlik.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8C528C232F333EE900F9D2EA /* HawlikTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HawlikTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8C528C2D2F333EE900F9D2EA /* HawlikUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HawlikUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -42,14 +59,6 @@
 				CategoryRow.swift,
 				ContentView.swift,
 				ControlsColumn.swift,
-				"Danah/1) AppUI.swift",
-				Danah/AppBackground.swift,
-				Danah/DanahUI.swift,
-				Danah/GlassFieldStyle.swift,
-				Danah/SelectPlacesView.swift,
-				Danah/TripDiaryRoot.swift,
-				Danah/TripDiaryShell.swift,
-				Danah/TripViewModel.swift,
 				HawlikApp.swift,
 				Interest.swift,
 				InterestPopup.swift,
@@ -78,15 +87,76 @@
 			);
 			target = 8C42C9A92F4A2B0D008290E2 /* Hawlik_iOS */;
 		};
+		8C42C9D32F4A2D6F008290E2 /* Exceptions for "Hawlik" folder in "Hawlik" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AppSehll.swift,
+				AppTapBar.swift,
+				Assets.xcassets,
+				Backto.swift,
+				BudgetPopup.swift,
+				CategoriesPopup.swift,
+				CategoryRow.swift,
+				ContentView.swift,
+				ControlsColumn.swift,
+				HawlikApp.swift,
+				Interest.swift,
+				InterestPopup.swift,
+				LocalSearchService.swift,
+				LocationManager.swift,
+				MainView.swift,
+				MapHomeView.swift,
+				MapScreen.swift,
+				MapViewRepresentable.swift,
+				MockPlaces.swift,
+				Norah1View.swift,
+				Norah2View.swift,
+				Place.swift,
+				PlaceDetailsSheet.swift,
+				PlacesNearYouSheet.swift,
+				PlacesViewModel.swift,
+				Prefrences.swift,
+				RootView.swift,
+				saved.swift,
+				Theme.swift,
+				TopBar.swift,
+				TripPlace.swift,
+				TripPlacesView.swift,
+				TripPlanningFlowView.swift,
+				TripsView.swift,
+			);
+			target = 8C528C152F333EE700F9D2EA /* Hawlik */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		8C42C9AB2F4A2B0D008290E2 /* Hawlik_iOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Hawlik_iOS;
+			sourceTree = "<group>";
+		};
+		8C42C9B92F4A2B0E008290E2 /* Hawlik_iOSTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Hawlik_iOSTests;
+			sourceTree = "<group>";
+		};
+		8C42C9C32F4A2B0E008290E2 /* Hawlik_iOSUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Hawlik_iOSUITests;
+			sourceTree = "<group>";
+		};
 		8C528C182F333EE700F9D2EA /* Hawlik */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				8C42C9D32F4A2D6F008290E2 /* Exceptions for "Hawlik" folder in "Hawlik" target */,
 				8C42C9D22F4A2D61008290E2 /* Exceptions for "Hawlik" folder in "Hawlik_iOS" target */,
 			);
 			path = Hawlik;
+			sourceTree = "<group>";
+		};
+		8C528C302F333EE900F9D2EA /* HawlikUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = HawlikUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -113,6 +183,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8C528C132F333EE700F9D2EA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8C528C202F333EE900F9D2EA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8C528C2A2F333EE900F9D2EA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -120,6 +211,10 @@
 			isa = PBXGroup;
 			children = (
 				8C528C182F333EE700F9D2EA /* Hawlik */,
+				8C528C302F333EE900F9D2EA /* HawlikUITests */,
+				8C42C9AB2F4A2B0D008290E2 /* Hawlik_iOS */,
+				8C42C9B92F4A2B0E008290E2 /* Hawlik_iOSTests */,
+				8C42C9C32F4A2B0E008290E2 /* Hawlik_iOSUITests */,
 				8C528C172F333EE700F9D2EA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -127,6 +222,9 @@
 		8C528C172F333EE700F9D2EA /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				8C528C162F333EE700F9D2EA /* Hawlik.app */,
+				8C528C232F333EE900F9D2EA /* HawlikTests.xctest */,
+				8C528C2D2F333EE900F9D2EA /* HawlikUITests.xctest */,
 				8C42C9AA2F4A2B0D008290E2 /* Hawlik_iOS.app */,
 				8C42C9B62F4A2B0E008290E2 /* Hawlik_iOSTests.xctest */,
 				8C42C9C02F4A2B0E008290E2 /* Hawlik_iOSUITests.xctest */,
@@ -149,6 +247,9 @@
 			);
 			dependencies = (
 			);
+			fileSystemSynchronizedGroups = (
+				8C42C9AB2F4A2B0D008290E2 /* Hawlik_iOS */,
+			);
 			name = Hawlik_iOS;
 			packageProductDependencies = (
 			);
@@ -168,6 +269,9 @@
 			);
 			dependencies = (
 				8C42C9B82F4A2B0E008290E2 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				8C42C9B92F4A2B0E008290E2 /* Hawlik_iOSTests */,
 			);
 			name = Hawlik_iOSTests;
 			packageProductDependencies = (
@@ -189,11 +293,79 @@
 			dependencies = (
 				8C42C9C22F4A2B0E008290E2 /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				8C42C9C32F4A2B0E008290E2 /* Hawlik_iOSUITests */,
+			);
 			name = Hawlik_iOSUITests;
 			packageProductDependencies = (
 			);
 			productName = Hawlik_iOSUITests;
 			productReference = 8C42C9C02F4A2B0E008290E2 /* Hawlik_iOSUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		8C528C152F333EE700F9D2EA /* Hawlik */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8C528C372F333EE900F9D2EA /* Build configuration list for PBXNativeTarget "Hawlik" */;
+			buildPhases = (
+				8C528C122F333EE700F9D2EA /* Sources */,
+				8C528C132F333EE700F9D2EA /* Frameworks */,
+				8C528C142F333EE700F9D2EA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				8C528C182F333EE700F9D2EA /* Hawlik */,
+			);
+			name = Hawlik;
+			packageProductDependencies = (
+			);
+			productName = Hawlik;
+			productReference = 8C528C162F333EE700F9D2EA /* Hawlik.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8C528C222F333EE900F9D2EA /* HawlikTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8C528C3A2F333EE900F9D2EA /* Build configuration list for PBXNativeTarget "HawlikTests" */;
+			buildPhases = (
+				8C528C1F2F333EE900F9D2EA /* Sources */,
+				8C528C202F333EE900F9D2EA /* Frameworks */,
+				8C528C212F333EE900F9D2EA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8C528C252F333EE900F9D2EA /* PBXTargetDependency */,
+			);
+			name = HawlikTests;
+			packageProductDependencies = (
+			);
+			productName = HawlikTests;
+			productReference = 8C528C232F333EE900F9D2EA /* HawlikTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		8C528C2C2F333EE900F9D2EA /* HawlikUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8C528C3D2F333EE900F9D2EA /* Build configuration list for PBXNativeTarget "HawlikUITests" */;
+			buildPhases = (
+				8C528C292F333EE900F9D2EA /* Sources */,
+				8C528C2A2F333EE900F9D2EA /* Frameworks */,
+				8C528C2B2F333EE900F9D2EA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8C528C2F2F333EE900F9D2EA /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				8C528C302F333EE900F9D2EA /* HawlikUITests */,
+			);
+			name = HawlikUITests;
+			packageProductDependencies = (
+			);
+			productName = HawlikUITests;
+			productReference = 8C528C2D2F333EE900F9D2EA /* HawlikUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -217,6 +389,17 @@
 						CreatedOnToolsVersion = 26.0.1;
 						TestTargetID = 8C42C9A92F4A2B0D008290E2;
 					};
+					8C528C152F333EE700F9D2EA = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
+					8C528C222F333EE900F9D2EA = {
+						CreatedOnToolsVersion = 26.0.1;
+						TestTargetID = 8C528C152F333EE700F9D2EA;
+					};
+					8C528C2C2F333EE900F9D2EA = {
+						CreatedOnToolsVersion = 26.0.1;
+						TestTargetID = 8C528C152F333EE700F9D2EA;
+					};
 				};
 			};
 			buildConfigurationList = 8C528C112F333EE700F9D2EA /* Build configuration list for PBXProject "Hawlik" */;
@@ -233,6 +416,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				8C528C152F333EE700F9D2EA /* Hawlik */,
+				8C528C222F333EE900F9D2EA /* HawlikTests */,
+				8C528C2C2F333EE900F9D2EA /* HawlikUITests */,
 				8C42C9A92F4A2B0D008290E2 /* Hawlik_iOS */,
 				8C42C9B52F4A2B0E008290E2 /* Hawlik_iOSTests */,
 				8C42C9BF2F4A2B0E008290E2 /* Hawlik_iOSUITests */,
@@ -256,6 +442,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		8C42C9BE2F4A2B0E008290E2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8C528C142F333EE700F9D2EA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8C528C212F333EE900F9D2EA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8C528C2B2F333EE900F9D2EA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -286,6 +493,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8C528C122F333EE700F9D2EA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8C528C1F2F333EE900F9D2EA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8C528C292F333EE900F9D2EA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -298,6 +526,16 @@
 			isa = PBXTargetDependency;
 			target = 8C42C9A92F4A2B0D008290E2 /* Hawlik_iOS */;
 			targetProxy = 8C42C9C12F4A2B0E008290E2 /* PBXContainerItemProxy */;
+		};
+		8C528C252F333EE900F9D2EA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8C528C152F333EE700F9D2EA /* Hawlik */;
+			targetProxy = 8C528C242F333EE900F9D2EA /* PBXContainerItemProxy */;
+		};
+		8C528C2F2F333EE900F9D2EA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8C528C152F333EE700F9D2EA /* Hawlik */;
+			targetProxy = 8C528C2E2F333EE900F9D2EA /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -312,7 +550,6 @@
 				DEVELOPMENT_TEAM = UYW9H52U42;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Hawlik;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We use your location to show nearby places on the map.\n";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -348,7 +585,6 @@
 				DEVELOPMENT_TEAM = UYW9H52U42;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Hawlik;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We use your location to show nearby places on the map.\n";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -583,6 +819,198 @@
 			};
 			name = Release;
 		};
+		8C528C382F333EE900F9D2EA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UYW9H52U42;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MARKETING_VERSION = 1.0;
+				NEW_SETTING = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.raghadaljuid.Hawlik;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		8C528C392F333EE900F9D2EA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UYW9H52U42;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MARKETING_VERSION = 1.0;
+				NEW_SETTING = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.raghadaljuid.Hawlik;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		8C528C3B2F333EE900F9D2EA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UYW9H52U42;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.raghadd.HawlikTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hawlik.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hawlik";
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		8C528C3C2F333EE900F9D2EA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UYW9H52U42;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.raghadd.HawlikTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hawlik.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hawlik";
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
+		8C528C3E2F333EE900F9D2EA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UYW9H52U42;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.raghadd.HawlikUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_TARGET_NAME = Hawlik;
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		8C528C3F2F333EE900F9D2EA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UYW9H52U42;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.raghadd.HawlikUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_TARGET_NAME = Hawlik;
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -618,6 +1046,33 @@
 			buildConfigurations = (
 				8C528C352F333EE900F9D2EA /* Debug */,
 				8C528C362F333EE900F9D2EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8C528C372F333EE900F9D2EA /* Build configuration list for PBXNativeTarget "Hawlik" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8C528C382F333EE900F9D2EA /* Debug */,
+				8C528C392F333EE900F9D2EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8C528C3A2F333EE900F9D2EA /* Build configuration list for PBXNativeTarget "HawlikTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8C528C3B2F333EE900F9D2EA /* Debug */,
+				8C528C3C2F333EE900F9D2EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8C528C3D2F333EE900F9D2EA /* Build configuration list for PBXNativeTarget "HawlikUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8C528C3E2F333EE900F9D2EA /* Debug */,
+				8C528C3F2F333EE900F9D2EA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -36,10 +36,10 @@ struct TopBar: View {
                     // TODO: افتح صفحة الحساب لاحقًا
                     print("Account tapped")
                 } label: {
-                    Image(systemName: "person.crop.circle")
-                        .font(.system(size: 22))
-                        .foregroundStyle(.gray)
-                        .contentShape(Rectangle())
+////                    Image(systemName: "person.crop.circle")
+//                        .font(.system(size: 22))
+//                        .foregroundStyle(.gray)
+//                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
 
