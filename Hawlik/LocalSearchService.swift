@@ -4,11 +4,12 @@
 //
 //  Created by Raghad Aljuid on 20/08/1447 AH.
 //
+
 import MapKit
 
 enum LocalSearchService {
 
-    // نخلي لكل اهتمام أكثر من Query (عشان ما تصير نتائج فاضية عند المراجعين)
+    // MARK: - Interest Queries (Fallbacks)
     static func queries(for interest: Interest) -> [String] {
         switch interest {
         case .restaurant: return ["Restaurant", "Restaurants", "Food", "Diner"]
@@ -22,6 +23,7 @@ enum LocalSearchService {
         }
     }
 
+    // MARK: - Keywords
     private static let fineDiningStrong: [String] = [
         "fine dining", "michelin", "tasting menu", "gourmet", "chef table",
         "omakase", "caviar", "wagyu", "truffle", "sushi bar", "chophouse",
@@ -43,6 +45,7 @@ enum LocalSearchService {
         "اقتصادي", "رخيص", "رخيصة", "شعبي", "سريع"
     ].map { $0.lowercased() }
 
+    // MARK: - 1) Existing Search: By Interest + Budget
     static func search(
         interest: Interest,
         region: MKCoordinateRegion,
@@ -99,6 +102,58 @@ enum LocalSearchService {
         }
 
         return []
+    }
+
+    // MARK: - 2) NEW: Text Search (for Search Bar)
+    /// تبحث بالكلمة اللي يكتبها المستخدم وتطلع أماكن مباشرة.
+    /// - Parameters:
+    ///   - query: النص من السيرش بار
+    ///   - region: منطقة البحث (عادة region حق الماب)
+    ///   - fallbackInterest: لو تبين تعطي Interest ثابت للنتائج (اختياري). إذا nil نعطي .trending.
+    ///   - budget: نفس فلترة الميزانية اللي عندك
+    static func searchText(
+        query: String,
+        region: MKCoordinateRegion,
+        fallbackInterest: Interest? = nil,
+        budget: Int? = nil
+    ) async -> [Place] {
+
+        let q = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !q.isEmpty else { return [] }
+
+        let request = MKLocalSearch.Request()
+        request.naturalLanguageQuery = q
+        request.region = region
+
+        do {
+            let response = try await MKLocalSearch(request: request).start()
+            let items = response.mapItems
+
+            let results: [MKMapItem]
+            if let budget, budget == 4 {
+                results = filterFineDining(items)
+            } else if let budget, budget == 1 {
+                results = items.filter { item in
+                    let haystack = searchableText(for: item)
+                    return lowPriceKeywords.contains(where: { haystack.contains($0) })
+                }
+            } else {
+                results = items
+            }
+
+            let interest = fallbackInterest ?? .trending
+
+            return results.compactMap { item -> Place? in
+                guard let name = item.name else { return nil }
+                return Place(
+                    name: name,
+                    interest: interest,
+                    coordinate: item.placemark.coordinate
+                )
+            }
+        } catch {
+            return []
+        }
     }
 
     // MARK: - Fine Dining Filtering with Fallback

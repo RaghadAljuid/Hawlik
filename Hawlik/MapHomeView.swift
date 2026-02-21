@@ -18,6 +18,13 @@ struct MapHomeView: View {
     @State private var showInterestPopup = false
     @State private var showFirstInterestPopup = false
 
+    // ✅ Search (submit-only)
+    @State private var searchText: String = ""
+    @State private var lastSubmittedQuery: String = ""
+    @State private var searchedPlaces: [Place] = []
+    @State private var searchTask: Task<Void, Never>? = nil
+    @State private var isSearching: Bool = false
+
     // Default Riyadh
     @State private var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 24.7136, longitude: 46.6753),
@@ -34,10 +41,19 @@ struct MapHomeView: View {
     private let riyadhCenter = CLLocationCoordinate2D(latitude: 24.7136, longitude: 46.6753)
     private let riyadhRadiusMeters: CLLocationDistance = 70000
 
+    private var displayedPlaces: [Place] {
+        lastSubmittedQuery.isEmpty ? places : searchedPlaces
+    }
+
+    // ✅ No Results: بعد submit فقط + بعد ما يخلص البحث + ولا فيه نتائج
+    private var showNoResults: Bool {
+        !lastSubmittedQuery.isEmpty && !isSearching && searchedPlaces.isEmpty
+    }
+
     var body: some View {
         ZStack {
             MapViewRepresentable(
-                places: places,
+                places: displayedPlaces,
                 region: $region,
                 followUser: $followUser,
                 onRequestSearchHere: { Task { await reloadPlaces() } },
@@ -57,9 +73,7 @@ struct MapHomeView: View {
 
                         Spacer()
 
-                        Button {
-                            focusOnRiyadhAndSearch()
-                        } label: {
+                        Button { focusOnRiyadhAndSearch() } label: {
                             Text("Show Riyadh")
                                 .font(.system(size: 13, weight: .bold))
                                 .padding(.horizontal, 12)
@@ -92,6 +106,21 @@ struct MapHomeView: View {
                         withAnimation(.easeInOut) { showInterestPopup = false }
                         saveInterests(selectedInterests)
                         Task { await reloadPlaces() }
+                    },
+                    searchText: $searchText,
+                    onSearchSubmit: { text in
+                        let q = text.trimmingCharacters(in: .whitespacesAndNewlines)
+
+                        if q.isEmpty {
+                            lastSubmittedQuery = ""
+                            searchedPlaces = []
+                            isSearching = false
+                            searchTask?.cancel()
+                            return
+                        }
+
+                        lastSubmittedQuery = q
+                        runSearch(q)
                     }
                 )
 
@@ -104,18 +133,19 @@ struct MapHomeView: View {
 
                 Spacer()
             }
+            .zIndex(40)
 
             VStack {
                 Spacer()
                 PlacesNearYouSheet(
                     title: "Places near you",
                     isExpanded: $isExpanded,
-                    places: places,
+                    places: displayedPlaces,
                     onSearchHere: { Task { await reloadPlaces() } }
                 )
             }
+            .zIndex(30)
 
-            // أول مرة
             if showFirstInterestPopup {
                 Color.black.opacity(0.35)
                     .ignoresSafeArea()
@@ -123,18 +153,49 @@ struct MapHomeView: View {
                 InterestPopup(selectedInterests: $selectedInterests) {
                     saveInterests(selectedInterests)
                     didSelectInterests = true
-
                     withAnimation(.easeInOut) { showFirstInterestPopup = false }
                     Task { await reloadPlaces() }
                 }
                 .transition(.scale.combined(with: .opacity))
-                .zIndex(10)
+                .zIndex(80)
+            }
+        }
+        // ✅ هذا هو الفرق الحقيقي: overlay فوق كل شيء بالغصب
+        .overlay {
+            if showNoResults {
+                VStack(spacing: 12) {
+                    Image(systemName: "mappin.slash.circle.fill")
+                        .font(.system(size: 58))
+                        .foregroundStyle(.gray.opacity(0.6))
+
+                    Text("No Results")
+                        .font(.system(size: 18, weight: .semibold))
+
+                    Text("Try another keyword")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.vertical, 34)
+                .padding(.horizontal, 28)
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                .shadow(radius: 10)
+                .allowsHitTesting(false)
+                .transition(.opacity)
+            }
+        }
+        // ✅ إذا مسحتي النص بالكامل: رجعي للوضع الطبيعي
+        .onChange(of: searchText) { _, newValue in
+            let t = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+            if t.isEmpty {
+                lastSubmittedQuery = ""
+                searchedPlaces = []
+                isSearching = false
+                searchTask?.cancel()
             }
         }
         .onAppear {
             selectedInterests = loadInterests()
-
-            // ✅ اطلب الإذن وابدأ التحديثات
             locationManager.requestWhenInUse()
 
             if !didSelectInterests {
@@ -147,14 +208,13 @@ struct MapHomeView: View {
         }
         .onDisappear {
             locationManager.stopUpdates()
+            searchTask?.cancel()
         }
-        // ✅ يتحدث كل ما تغير موقع السيميوليتر
         .onChange(of: locationManager.lastLocation) { newLoc in
             guard let newLoc else { return }
 
             updateRiyadhBannerIfNeeded(userLocation: newLoc)
 
-            // أول مرة فقط: نسنتر على المستخدم
             if !didCenterOnUserOnce {
                 didCenterOnUserOnce = true
                 followUser = false
@@ -162,7 +222,6 @@ struct MapHomeView: View {
                 Task { await reloadPlaces() }
             }
         }
-        // ✅ لو رفض الإذن
         .onChange(of: locationManager.authorizationStatus) { status in
             if status == .denied || status == .restricted {
                 withAnimation(.easeInOut) { showRiyadhOnlyBanner = true }
@@ -172,6 +231,44 @@ struct MapHomeView: View {
             PlaceDetailsSheet(place: place, vm: vm)
                 .presentationDetents([.fraction(0.45), .large])
                 .presentationDragIndicator(.visible)
+        }
+    }
+
+    // MARK: - Search (submit-only) + strict filter + MainActor updates
+    private func runSearch(_ query: String) {
+        searchTask?.cancel()
+
+        // reset for each submit
+        searchedPlaces = []
+        isSearching = true
+
+        let needle = query.lowercased()
+
+        searchTask = Task {
+            var r = region
+            if showRiyadhOnlyBanner {
+                r.center = riyadhCenter
+            }
+
+            let results = await LocalSearchService.searchText(
+                query: query,
+                region: r,
+                fallbackInterest: .trending,
+                budget: selectedBudget
+            )
+
+            if Task.isCancelled {
+                await MainActor.run { self.isSearching = false }
+                return
+            }
+
+            // ✅ فلترة صارمة عشان الكلمات الغلط تعطي No Results
+            let strict = results.filter { $0.name.lowercased().contains(needle) }
+
+            await MainActor.run {
+                self.searchedPlaces = strict
+                self.isSearching = false
+            }
         }
     }
 
@@ -192,7 +289,6 @@ struct MapHomeView: View {
         let riyadhLoc = CLLocation(latitude: riyadhCenter.latitude, longitude: riyadhCenter.longitude)
         let distance = userLocation.distance(from: riyadhLoc)
         let outside = distance > riyadhRadiusMeters
-
         withAnimation(.easeInOut) { showRiyadhOnlyBanner = outside }
     }
 
@@ -205,9 +301,11 @@ struct MapHomeView: View {
 
     // MARK: - Reload Places
     private func reloadPlaces() async {
+        // لا تخلط بحث النص مع بحث الاهتمامات
+        if !lastSubmittedQuery.isEmpty { return }
+
         let interestToUse: Interest = selectedInterests.first ?? .coffeeShop
 
-        // إذا خارج الرياض: نخلي البحث على الرياض حتى ما يطلع فاضي
         if showRiyadhOnlyBanner {
             region.center = riyadhCenter
         }
@@ -220,4 +318,3 @@ struct MapHomeView: View {
         )
     }
 }
-

@@ -1,62 +1,68 @@
-//
-//  TopBar.swift
-//  Hawlik
-//
-//  Created by Raghad Aljuid on 20/08/1447 AH.
-//
 import SwiftUI
 
 struct TopBar: View {
+
     @Binding var showBudgetPopup: Bool
     @Binding var showInterestPopup: Bool
 
     let selectedBudget: Int?
     let hasActiveInterests: Bool
 
-    // ✅ جديد
     @Binding var selectedInterests: Set<Interest>
     var onDoneCategories: () -> Void
 
-    @State private var searchText = ""
+    // 🔥 مهم
+    @Binding var searchText: String
+    var onSearchSubmit: (String) -> Void
+
+    @FocusState private var isSearchFocused: Bool
 
     var body: some View {
         VStack(spacing: 10) {
 
-            // Search bar (واجهة فقط الآن)
+            // SEARCH BAR
             HStack(spacing: 10) {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(.green)
 
                 TextField("Search", text: $searchText)
                     .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled(true)
+                    .submitLabel(.search)
+                    .focused($isSearchFocused)
+                    .onSubmit {
+                        onSearchSubmit(searchText)   // 🔥 هذا اللي كان ناقص
+                        isSearchFocused = false
+                    }
+
+                if !searchText.isEmpty {
+                    Button {
+                        searchText = ""
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.gray.opacity(0.7))
+                    }
+                    .buttonStyle(.plain)
+                }
 
                 Spacer()
 
-                Button {
-                    // TODO: افتح صفحة الحساب لاحقًا
-                    print("Account tapped")
-                } label: {
-////                    Image(systemName: "person.crop.circle")
-//                        .font(.system(size: 22))
-//                        .foregroundStyle(.gray)
-//                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-
+                Image(systemName: "person.crop.circle")
+                    .font(.system(size: 22))
+                    .foregroundStyle(.gray)
             }
             .padding(.horizontal, 14)
             .frame(height: 52)
             .background(Color.white.opacity(0.9))
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
             .padding(.horizontal, 14)
             .padding(.top, 6)
 
-            // Row: Budget + Interests
+            // FILTERS
             HStack(spacing: 10) {
 
-                // ✅ Budget button
                 Button {
-                    withAnimation(.easeInOut) { showBudgetPopup.toggle() }
+                    withAnimation { showBudgetPopup.toggle() }
                     if showBudgetPopup { showInterestPopup = false }
                 } label: {
                     HStack(spacing: 8) {
@@ -72,39 +78,31 @@ struct TopBar: View {
                     .padding(.horizontal, 12)
                     .frame(height: 36)
                     .background(Color(hex: "#CCADD9").opacity(0.65))
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
-                .buttonStyle(.plain)
 
-                // ✅ Categories button + POPUP صغير تحت الزر
                 Button {
-                    withAnimation(.easeInOut) { showInterestPopup.toggle() }
+                    withAnimation { showInterestPopup.toggle() }
                     if showInterestPopup { showBudgetPopup = false }
                 } label: {
                     HStack(spacing: 8) {
                         Text("Categories")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(.black.opacity(0.8))
 
                         Image(systemName: "chevron.down")
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundStyle(.black.opacity(0.6))
                     }
                     .padding(.horizontal, 12)
                     .frame(height: 36)
                     .background(Color(hex: "#CCADD9").opacity(hasActiveInterests ? 0.65 : 0.35))
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
-                .buttonStyle(.plain)
-                .popover(isPresented: $showInterestPopup,
-                         attachmentAnchor: .rect(.bounds),
-                         arrowEdge: .top) {
-
+                .popover(isPresented: $showInterestPopup) {
                     CategoriesPopup(selectedInterests: $selectedInterests) {
                         onDoneCategories()
                     }
                     .padding(8)
-                    .presentationCompactAdaptation(.none) // ✅ يخليه Popup مو Sheet على iPhone
+                    .presentationCompactAdaptation(.none)
                 }
 
                 Spacer()
