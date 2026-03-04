@@ -46,10 +46,10 @@ struct TopBar: View {
                 }
 
                 Spacer()
-
-                Image(systemName: "person.crop.circle")
-                    .font(.system(size: 22))
-                    .foregroundStyle(.gray)
+                //
+                //                Image(systemName: "person.crop.circle")
+                //                    .font(.system(size: 22))
+                //                    .foregroundStyle(.gray)
             }
             .padding(.horizontal, 14)
             .frame(height: 52)
@@ -88,9 +88,11 @@ struct TopBar: View {
                     HStack(spacing: 8) {
                         Text("Categories")
                             .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(.black) // ← اجعل اللون أسود
 
                         Image(systemName: "chevron.down")
                             .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(.black.opacity(0.6))
                     }
                     .padding(.horizontal, 12)
                     .frame(height: 36)

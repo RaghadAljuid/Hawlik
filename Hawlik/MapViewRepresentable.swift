@@ -54,19 +54,37 @@ struct MapViewRepresentable: UIViewRepresentable {
 
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             if annotation is MKUserLocation { return nil }
+            guard let ann = annotation as? PlaceAnnotation else { return nil }
 
             let id = "pin"
             let view = mapView.dequeueReusableAnnotationView(withIdentifier: id) as? MKMarkerAnnotationView
-            ?? MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: id)
+            ?? MKMarkerAnnotationView(annotation: ann, reuseIdentifier: id)
 
-            view.annotation = annotation
+            view.annotation = ann
             view.canShowCallout = false
+
+            // نفس شكل البن/نفس اللون
             view.markerTintColor = UIColor(Color(hex: "#6A6DFF"))
             view.glyphTintColor = .white
-            view.glyphImage = UIImage(systemName: "sparkles")
+
+            // ✅ هنا التغيير: الأيقونة حسب الكاتقوري
+            view.glyphImage = glyphImage(for: ann.place.interest)
+
             return view
         }
 
+        private func glyphImage(for interest: Interest) -> UIImage? {
+            if interest == .restaurant {
+                return UIImage(systemName: "fork.knife")
+            }
+
+            if let img = UIImage(named: interest.assetName) {
+                return img
+            }
+
+            return UIImage(systemName: interest.fallbackSF)
+        }
+        
         // ✅ التقاط الضغط على البن
         func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
             guard let ann = view.annotation as? PlaceAnnotation else { return }
