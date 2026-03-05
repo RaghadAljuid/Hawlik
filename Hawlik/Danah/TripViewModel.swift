@@ -1,42 +1,214 @@
-//
-//  TripViewModel.swift
-//  Hawlik
-//
-//  Created by Raghad Aljuid on 27/08/1447 AH.
-//
 import SwiftUI
 import Combine
+import MapKit
+import CoreLocation
 
-class TripViewModel: ObservableObject {
+final class TripViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
 
+    // MARK: - Preference (موجود عندك بملف TripPlace.swift)
     @Published var preference = TripPreference()
-    @Published var filteredPlaces: [TripPlace] = []
-    @Published var selectedPlaces: [TripPlace] = []
-    @Published var isEditing: Bool = false
 
-    let budgetImages = ["budget1", "budget2", "budget3","budget4"]
-    let interestOptions = ["Trend", "Sports", "Shopping", "History", "Coffee", "Entertainment", "Nature", "Food"]
+    // MARK: - Nearby places (صفحة SelectPlacesView)
+    @Published var nearbyPlaces: [TripPlace] = []
+    @Published var isLoadingNearby: Bool = false
+    @Published var nearbyErrorMessage: String? = nil
 
-    private let allPlaces: [TripPlace] = [
-        TripPlace(name: "Diriyah", budget: "budget3", interest: "History"),
-        TripPlace(name: "Blvd World", budget: "budget2", interest: "Entertainment"),
-        TripPlace(name: "Six Flags", budget: "budget4", interest: "Sports"),
-        TripPlace(name: "Jadeel Coffee", budget: "budget1", interest: "Coffee"),
-        TripPlace(name: "Boulevard", budget: "budget2", interest: "Entertainment")
-    ]
+    // MARK: - Selection داخل صفحة SelectPlacesView
+    @Published var selectedPlaces: Set<TripPlace> = []
 
-    func continuePlanning() {
-        filteredPlaces = allPlaces.filter {
-            $0.budget == preference.budget &&
-            $0.interest == preference.interest
+    // MARK: - Saved (صفحة Your Trip Places)
+    @Published var savedPlaces: [TripPlace] = []
+
+    // MARK: - Private
+    private let locationManager = CLLocationManager()
+    private var didStartOnce = false
+
+    private let fallbackCenter = CLLocationCoordinate2D(latitude: 24.7136, longitude: 46.6753) // Riyadh
+    private let searchRadiusMeters: CLLocationDistance = 3500
+    private let savedPlacesKey = "hawlik.savedPlaces.v1"
+
+    // MARK: - Init
+    override init() {
+        super.init()
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+
+        // تحميل المحفوظات
+        savedPlaces = Self.loadPlaces(key: savedPlacesKey)
+    }
+
+    // MARK: - Public API
+
+    /// نادِها في onAppear أول مرة
+    func startNearby() {
+        guard !didStartOnce else { return }
+        didStartOnce = true
+        loadNearbyPlaces()
+    }
+
+    /// تقدر تناديها من زر Try Again
+    func loadNearbyPlaces() {
+        nearbyErrorMessage = nil
+        isLoadingNearby = true
+        nearbyPlaces = []
+
+        let status = locationManager.authorizationStatus
+
+        switch status {
+        case .notDetermined:
+            locationManager.requestWhenInUseAuthorization()
+
+        case .restricted, .denied:
+            // بدون إذن: fallback
+            searchAround(center: fallbackCenter)
+
+        case .authorizedAlways, .authorizedWhenInUse:
+            locationManager.requestLocation()
+
+        @unknown default:
+            searchAround(center: fallbackCenter)
         }
     }
 
     func togglePlace(_ place: TripPlace) {
-        if let index = selectedPlaces.firstIndex(of: place) {
-            selectedPlaces.remove(at: index)
+        if selectedPlaces.contains(place) {
+            selectedPlaces.remove(place)
         } else {
-            selectedPlaces.append(place)
+            selectedPlaces.insert(place)
+        }
+    }
+
+    /// زر Save في صفحة اختيار الأماكن
+    func saveSelectedPlacesToSaved() {
+        guard !selectedPlaces.isEmpty else { return }
+
+        var merged = savedPlaces
+        for p in selectedPlaces {
+            if !merged.contains(where: { $0.name.lowercased() == p.name.lowercased() }) {
+                merged.append(p)
+            }
+        }
+
+        savedPlaces = merged
+        Self.savePlaces(savedPlaces, key: savedPlacesKey)
+
+        selectedPlaces.removeAll()
+    }
+
+    func removeSavedPlace(_ place: TripPlace) {
+        savedPlaces.removeAll { $0.name.lowercased() == place.name.lowercased() }
+        Self.savePlaces(savedPlaces, key: savedPlacesKey)
+    }
+
+    // MARK: - CLLocationManagerDelegate
+
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        let status = manager.authorizationStatus
+
+        if status == .authorizedWhenInUse || status == .authorizedAlways {
+            manager.requestLocation()
+        } else if status == .denied || status == .restricted {
+            searchAround(center: fallbackCenter)
+        }
+    }
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let loc = locations.first else {
+            searchAround(center: fallbackCenter)
+            return
+        }
+        searchAround(center: loc.coordinate)
+    }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        searchAround(center: fallbackCenter)
+    }
+
+    // MARK: - MKLocalSearch
+
+    private func searchAround(center: CLLocationCoordinate2D) {
+        let region = MKCoordinateRegion(
+            center: center,
+            latitudinalMeters: searchRadiusMeters * 2,
+            longitudinalMeters: searchRadiusMeters * 2
+        )
+
+        let queries: [(query: String, interest: String)] = [
+            ("Museum", "History"),
+            ("Historic", "History"),
+            ("Coffee", "Coffee"),
+            ("Cafe", "Coffee"),
+            ("Restaurant", "Food"),
+            ("Food", "Food"),
+            ("Park", "Nature"),
+            ("Garden", "Nature"),
+            ("Mall", "Shopping"),
+            ("Shopping", "Shopping"),
+            ("Entertainment", "Entertainment"),
+            ("Cinema", "Entertainment")
+        ]
+
+        let group = DispatchGroup()
+        var results: [TripPlace] = []
+        var seenNames = Set<String>()
+
+        for item in queries {
+            group.enter()
+
+            let request = MKLocalSearch.Request()
+            request.naturalLanguageQuery = item.query
+            request.region = region
+
+            MKLocalSearch(request: request).start { response, _ in
+                defer { group.leave() }
+
+                guard let mapItems = response?.mapItems else { return }
+
+                for m in mapItems {
+                    let name = (m.name ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard !name.isEmpty else { continue }
+
+                    let key = name.lowercased()
+                    guard !seenNames.contains(key) else { continue }
+                    seenNames.insert(key)
+
+                    // budget موجود في TripPlace عندك، نخليه فاضي
+                    let place = TripPlace(name: name, budget: "", interest: item.interest)
+                    results.append(place)
+                }
+            }
+        }
+
+        group.notify(queue: .main) {
+            self.isLoadingNearby = false
+            self.nearbyPlaces = results.sorted { $0.name < $1.name }
+
+            if self.nearbyPlaces.isEmpty {
+                self.nearbyErrorMessage = "Couldn’t load nearby places. Check Location permission."
+            } else {
+                self.nearbyErrorMessage = nil
+            }
+        }
+    }
+
+    // MARK: - Persistence
+
+    private static func savePlaces(_ places: [TripPlace], key: String) {
+        let payload: [[String: String]] = places.map {
+            ["name": $0.name, "budget": $0.budget, "interest": $0.interest]
+        }
+        UserDefaults.standard.set(payload, forKey: key)
+    }
+
+    private static func loadPlaces(key: String) -> [TripPlace] {
+        guard let payload = UserDefaults.standard.array(forKey: key) as? [[String: String]] else {
+            return []
+        }
+        return payload.compactMap { dict in
+            guard let name = dict["name"] else { return nil }
+            let budget = dict["budget"] ?? ""
+            let interest = dict["interest"] ?? ""
+            return TripPlace(name: name, budget: budget, interest: interest)
         }
     }
 }

@@ -1,141 +1,173 @@
-//
-//  SelectPlacesView.swift
-//  Hawlik
-//
-//  Created by Raghad Aljuid on 27/08/1447 AH.
-//
 import SwiftUI
 
 struct SelectPlacesView: View {
 
     @ObservedObject var viewModel: TripViewModel
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-
         ZStack {
             Image("background")
                 .resizable()
-                .scaledToFill()
                 .ignoresSafeArea()
 
-            VStack {
+            VStack(spacing: 0) {
 
-                // 🔹 Top Bar
+                // Top Bar
                 HStack {
-                    Button { dismiss() } label: {
+                    Button {
+                        dismiss()
+                    } label: {
                         HStack(spacing: 6) {
                             Image(systemName: "chevron.left")
                             Text("Back")
                         }
-                        .font(.title3)
-                        .foregroundColor(.white)
+                        .foregroundColor(.white.opacity(0.95))
                     }
 
                     Spacer()
-
-                    if !viewModel.selectedPlaces.isEmpty {
-                        NavigationLink {
-                            TripPlacesView(viewModel: viewModel)
-                        } label: {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 32))
-                                .foregroundColor(.white)
-                        }
-                    }
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 20)
+                .padding(.horizontal, 18)
+                .padding(.top, 14)
 
-                Spacer(minLength: 18)
+                Spacer(minLength: 30)
 
-                Text("Select Your Places")
-                    .font(.system(size: 34, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
+                // Glass Card
+                VStack(alignment: .leading, spacing: 14) {
 
-                Spacer(minLength: 18)
+                    Text("Select Your Places")
+                        .font(.system(size: 30, weight: .bold, design: .rounded))
+                        .foregroundColor(.white.opacity(0.95))
 
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: 18) {
-                        ForEach(viewModel.filteredPlaces) { place in
-                            TripPlaceCard(
-                                place: place,
-                                isSelected: viewModel.selectedPlaces.contains(place),
-                                iconName: iconName(for: place.interest)
-                            )
-                            .onTapGesture {
-                                viewModel.togglePlace(place)
+                    if viewModel.isLoadingNearby {
+                        HStack(spacing: 10) {
+                            ProgressView()
+                                .tint(.white.opacity(0.8))
+                            Text("Loading nearby places...")
+                                .foregroundColor(.white.opacity(0.65))
+                                .font(.system(size: 16, weight: .medium))
+                        }
+                        .padding(.top, 4)
+                    }
+
+                    if let msg = viewModel.nearbyErrorMessage {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text(msg)
+                                .foregroundColor(.white.opacity(0.65))
+                                .font(.system(size: 16, weight: .medium))
+
+                            Button {
+                                viewModel.loadNearbyPlaces()
+                            } label: {
+                                Text("Try Again")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(.white.opacity(0.9))
+                                    .padding(.horizontal, 18)
+                                    .padding(.vertical, 10)
+                                    .background(Color.white.opacity(0.12))
+                                    .clipShape(RoundedRectangle(cornerRadius: 14))
                             }
                         }
+                        .padding(.top, 4)
                     }
-                    .padding(.horizontal, 18)
-                    .padding(.top, 6)
-                    .padding(.bottom, 24)
-                }
 
-                Spacer(minLength: 0)
+                    // List
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 14) {
+                            ForEach(viewModel.nearbyPlaces) { place in
+                                SelectPlaceRow(
+                                    title: place.name,
+                                    subtitle: place.interest,
+                                    isSelected: viewModel.selectedPlaces.contains(place)
+                                ) {
+                                    viewModel.togglePlace(place)
+                                }
+                            }
+                        }
+                        .padding(.top, 6)
+                    }
+                    .frame(maxHeight: 260)
+
+                }
+                .padding(18)
+                .background(
+                    RoundedRectangle(cornerRadius: 28)
+                        .fill(Color.black.opacity(0.18))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 28)
+                                .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                        )
+                )
+                .padding(.horizontal, 22)
+
+                Spacer()
+
+                // Save Button
+                Button {
+                    viewModel.saveSelectedPlacesToSaved()
+                    dismiss()
+                } label: {
+                    Text("Save")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.9))
+                        .frame(maxWidth: .infinity, minHeight: 54)
+                        .background(Color.white.opacity(viewModel.selectedPlaces.isEmpty ? 0.10 : 0.22))
+                        .clipShape(RoundedRectangle(cornerRadius: 22))
+                }
+                .disabled(viewModel.selectedPlaces.isEmpty)
+                .padding(.horizontal, 22)
+                .padding(.bottom, 24)
             }
         }
+        .onAppear { viewModel.startNearby() }
+
+        // يمنع تكرار الـ Back
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
     }
-
-    // ✅ اربطي interest (String) باسم صورة من الـ Assets
-    private func iconName(for interest: String) -> String {
-        let map: [String: String] = [
-            "History": "historical",
-            "Coffee": "coffeeShop",
-            "Entertainment": "activities",
-            "Food": "restaurant",
-            "Sports": "sports",
-            "Trend": "trending",
-            "Shopping": "shopping",
-            "Nature": "nature"
-        ]
-        return map[interest] ?? "activities"  // default
-    }
 }
 
-struct TripPlaceCard: View {
-    let place: TripPlace
+private struct SelectPlaceRow: View {
+    let title: String
+    let subtitle: String
     let isSelected: Bool
-    let iconName: String
+    let onTap: () -> Void
 
     var body: some View {
-        HStack(spacing: 16) {
-
+        HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 6) {
-                Text(place.name)
-                    .font(.system(size: 22, weight: .semibold, design: .rounded))
-                    .foregroundColor(.white)
+                Text(title)
+                    .font(.system(size: 18, weight: .semibold, design: .rounded))
+                    .foregroundColor(.white.opacity(0.92))
+                    .lineLimit(1)
 
-                Text(place.interest)
-                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                Text(subtitle)
+                    .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.white.opacity(0.55))
             }
 
             Spacer()
 
-            ZStack {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.white.opacity(0.10))
-
-                Image(iconName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 44, height: 44)
+            Button(action: onTap) {
+                Image(systemName: isSelected ? "checkmark" : "plus")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.white.opacity(0.9))
+                    .frame(width: 54, height: 44)
+                    .background(
+                        RoundedRectangle(cornerRadius: 14)
+                            .fill(Color.white.opacity(0.12))
+                    )
             }
-            .frame(width: 92, height: 56)
         }
-        .padding(.horizontal, 18)
-        .padding(.vertical, 18)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 14)
         .background(
-            RoundedRectangle(cornerRadius: 28)
-                .fill(Color.black.opacity(0.45))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 28)
-                .stroke(isSelected ? Color.green.opacity(0.6) : Color.clear, lineWidth: 2)
+            RoundedRectangle(cornerRadius: 18)
+                .fill(Color.black.opacity(0.18))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18)
+                        .stroke(isSelected ? Color.green.opacity(0.45) : Color.white.opacity(0.10), lineWidth: 1)
+                )
         )
     }
 }

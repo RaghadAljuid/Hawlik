@@ -1,9 +1,3 @@
-//
-//  Norah1View.swift
-//  Hawlik
-//
-//  Created by Raghad Aljuid on 27/08/1447 AH.
-//
 import SwiftUI
 
 struct Norah1View: View {
