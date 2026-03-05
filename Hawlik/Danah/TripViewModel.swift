@@ -5,19 +5,20 @@ import CoreLocation
 
 final class TripViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
 
-    // MARK: - Preference (موجود عندك بملف TripPlace.swift)
+    // MARK: - Preference (موجود عندك، ما نستخدمه هنا)
     @Published var preference = TripPreference()
 
-    // MARK: - Nearby places (صفحة SelectPlacesView)
+    // MARK: - Nearby places
     @Published var nearbyPlaces: [TripPlace] = []
     @Published var isLoadingNearby: Bool = false
     @Published var nearbyErrorMessage: String? = nil
 
-    // MARK: - Selection داخل صفحة SelectPlacesView
+    // MARK: - Selection داخل SelectPlacesView
     @Published var selectedPlaces: Set<TripPlace> = []
 
-    // MARK: - Saved (صفحة Your Trip Places)
+    // MARK: - Saved (Your Trip Places)
     @Published var savedPlaces: [TripPlace] = []
+    @Published var isEditing: Bool = false
 
     // MARK: - Private
     private let locationManager = CLLocationManager()
@@ -25,6 +26,7 @@ final class TripViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
 
     private let fallbackCenter = CLLocationCoordinate2D(latitude: 24.7136, longitude: 46.6753) // Riyadh
     private let searchRadiusMeters: CLLocationDistance = 3500
+
     private let savedPlacesKey = "hawlik.savedPlaces.v1"
 
     // MARK: - Init
@@ -33,20 +35,19 @@ final class TripViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
 
-        // تحميل المحفوظات
+        // تحميل المحفوظات من الجهاز (عشان تبقى بعد ما تقفلين التطبيق)
         savedPlaces = Self.loadPlaces(key: savedPlacesKey)
     }
 
-    // MARK: - Public API
+    // MARK: - Public
 
-    /// نادِها في onAppear أول مرة
+    /// نادِها onAppear مرة وحدة
     func startNearby() {
         guard !didStartOnce else { return }
         didStartOnce = true
         loadNearbyPlaces()
     }
 
-    /// تقدر تناديها من زر Try Again
     func loadNearbyPlaces() {
         nearbyErrorMessage = nil
         isLoadingNearby = true
@@ -59,7 +60,6 @@ final class TripViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
             locationManager.requestWhenInUseAuthorization()
 
         case .restricted, .denied:
-            // بدون إذن: fallback
             searchAround(center: fallbackCenter)
 
         case .authorizedAlways, .authorizedWhenInUse:
@@ -78,7 +78,7 @@ final class TripViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
         }
     }
 
-    /// زر Save في صفحة اختيار الأماكن
+    /// زر Save في SelectPlacesView
     func saveSelectedPlacesToSaved() {
         guard !selectedPlaces.isEmpty else { return }
 
@@ -89,7 +89,7 @@ final class TripViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
             }
         }
 
-        savedPlaces = merged
+        savedPlaces = merged.sorted { $0.name < $1.name }
         Self.savePlaces(savedPlaces, key: savedPlacesKey)
 
         selectedPlaces.removeAll()
@@ -133,17 +133,26 @@ final class TripViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
             longitudinalMeters: searchRadiusMeters * 2
         )
 
+        // query -> interest
         let queries: [(query: String, interest: String)] = [
             ("Museum", "History"),
             ("Historic", "History"),
+
             ("Coffee", "Coffee"),
             ("Cafe", "Coffee"),
+
             ("Restaurant", "Food"),
             ("Food", "Food"),
+
             ("Park", "Nature"),
             ("Garden", "Nature"),
+
             ("Mall", "Shopping"),
             ("Shopping", "Shopping"),
+
+            ("Gym", "Sports"),
+            ("Sports", "Sports"),
+
             ("Entertainment", "Entertainment"),
             ("Cinema", "Entertainment")
         ]
@@ -172,7 +181,7 @@ final class TripViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
                     guard !seenNames.contains(key) else { continue }
                     seenNames.insert(key)
 
-                    // budget موجود في TripPlace عندك، نخليه فاضي
+                    // budget ما نحتاجه هنا
                     let place = TripPlace(name: name, budget: "", interest: item.interest)
                     results.append(place)
                 }
@@ -191,7 +200,7 @@ final class TripViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
         }
     }
 
-    // MARK: - Persistence
+    // MARK: - Persistence (UserDefaults)
 
     private static func savePlaces(_ places: [TripPlace], key: String) {
         let payload: [[String: String]] = places.map {
