@@ -8,7 +8,7 @@ An intelligent tourism companion designed to help visitors discover attractions,
 
 Hawlik is a tourism planning and navigation application that provides personalized recommendations based on user interests and budget. The app helps tourists efficiently plan their trips and explore Saudi Arabia through one unified platform.
 <p align="center">
- <img width="1920" height="1080" alt="App Overview Template Hawlik1 001" src="https://github.com/user-attachments/assets/xxxxxx" />
+  <img src="Hawlik.png" alt="Hawlik App Overview" width="100%" />
 </p>
 
 ## 🎯 Problem
