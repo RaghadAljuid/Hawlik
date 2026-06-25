@@ -1,4 +1,6 @@
-# Hawlik ![image alt](https://github.com/RaghadAljuid/Hawlik/blob/302c10bd90539a7cae7dfa859263652281a21445/Group%20123204.png)
+# Hawlik <h1> <img src="Group%20123204.png" alt="Hawlik Logo" width="45" align="center">
+  Hawlik
+</h1>
 
 An intelligent tourism companion designed to help visitors discover attractions, restaurants, events, and hidden gems across Saudi Arabia.
 
